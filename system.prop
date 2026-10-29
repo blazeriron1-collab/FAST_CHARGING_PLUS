@@ -1,0 +1,9 @@
+persist.vendor.charge.turbo=1
+persist.vendor.charge.fast=1
+persist.sys.charge_profile=1
+persist.vendor.charge.screen_on=1
+persist.vendor.cp.fastcharge=1
+persist.vendor.battery.fastcharge=1
+persist.sys.turbonfc=1
+vendor.battery.fastcharge=1
+vendor.fastcharge.boost=1
