@@ -1,21 +1,19 @@
 # FAST_CHARGING_PLUS v1.0
 
-> Modul Magisk / KernelSU / APatch untuk optimasi fast charging 67W Poco F4 (munch / Snapdragon 8250) pada custom ROM Evolution X.
+> Modul Magisk / KernelSU / APatch untuk optimasi fast charging 67W Poco F4 (munch / Snapdragon 8250)
 
 Dibuat & dimodifikasi oleh: **yafi**
 
 ---
 
 ## ⚡ Fitur Utama
-1. **No Game Bypass / No Inactive Charging**:
-   Baterai tetap diisi secara konsisten saat membuka game atau aplikasi berat, tanpa jeda inactive.
-2. **67W Dual Charge Pump Unthrottled**:
+1. **67W Dual Charge Pump Unthrottled**:
    Mengoptimalkan IC dual pump SM8250 agar pengisian tetap berada di kecepatan puncak lebih lama.
-3. **Screen-on Current Boost**:
+2. **Screen-on Current Boost**:
    Mencegah pembatasan arus charging ke 1.5A saat layar aktif.
-4. **Live Watt Notifikasi**:
+3. **Live Watt Notifikasi**:
    Notifikasi real-time menampilkan suhu baterai (°C), persentase baterai (%), arus masuk (mA), dan daya charging aktual (Watt).
-5. **Aman & Dingin**:
+4. **Aman & Dingin**:
    Governor kernel dinamis menurunkan arus secara bertahap saat suhu melewati 46°C untuk proteksi baterai.
 
 ---
@@ -23,7 +21,7 @@ Dibuat & dimodifikasi oleh: **yafi**
 ## 📱 Kompatibilitas
 - **Device**: Xiaomi Poco F4 (Codename: munch)
 - **Chipset**: Qualcomm Snapdragon 870 5G (SM8250-AC)
-- **ROM**: Evolution X (Android 13 / 14) & AOSP-based ROMs
+- **ROM**: AOSP-based ROMs
 - **Root**: Magisk v24+, KernelSU, APatch
 
 ---
