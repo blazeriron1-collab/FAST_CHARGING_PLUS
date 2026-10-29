@@ -22,8 +22,6 @@ sleep 0.3
 ui_print " "
 ui_print "  ⚡ Inti Fast Charging 67W:"
 sleep 0.2
-ui_print "  • Tanpa Game Bypass — baterai tetap diisi saat main game"
-sleep 0.2
 ui_print "  • Tanpa Inactive Charging — arus tidak pernah dipotong"
 sleep 0.2
 ui_print "  • Screen-on current throttle dibuka"
