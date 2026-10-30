@@ -10,7 +10,7 @@ ui_print "╚══════════════════════�
 ui_print " "
 ui_print "  Device  : Xiaomi Poco F4 (munch / SM8250)"
 ui_print "  ROM     : Evolution X / AOSP"
-ui_print "  Version : v2.0-yafi"
+ui_print "  Version : v1.0"
 ui_print "  Author  : yafi"
 ui_print " "
 
