@@ -2,8 +2,6 @@
 
 > Modul Magisk / KernelSU / APatch untuk optimasi fast charging 67W Poco F4 (munch / Snapdragon 8250)
 
-Dibuat & dimodifikasi oleh: **yafi**
-
 ---
 
 ## ⚡ Fitur Utama
