@@ -36,7 +36,14 @@ grant_helper_permissions() {
   dumpsys deviceidle tempwhitelist com.hypercharge.service >/dev/null 2>&1
 }
 
-install_helper_apk
+# wait until Android boots AND package manager registers the system app (max 30s)
+_W=0
+while [ "$_W" -lt 15 ]; do
+  pm list packages 2>/dev/null | grep -q "com.hypercharge.service" && break
+  sleep 2
+  _W=$((_W + 1))
+done
+
 grant_helper_permissions
 am start-foreground-service --user 0 -n "$NOTIF_SVC" >/dev/null 2>&1
 sleep 2
