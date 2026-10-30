@@ -1,21 +1,45 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
 
-sleep 5
-
-# Setup notification service permissions
-pm grant com.hypercharge.service android.permission.POST_NOTIFICATIONS >/dev/null 2>&1
-pm grant com.hypercharge.service android.permission.FOREGROUND_SERVICE >/dev/null 2>&1
-pm grant com.hypercharge.service android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS >/dev/null 2>&1
-appops set com.hypercharge.service POST_NOTIFICATIONS allow >/dev/null 2>&1
-dumpsys deviceidle whitelist +com.hypercharge.service >/dev/null 2>&1
-dumpsys deviceidle tempwhitelist com.hypercharge.service >/dev/null 2>&1
-cmd appops set com.hypercharge.service RUN_IN_BACKGROUND allow >/dev/null 2>&1
-cmd appops set com.hypercharge.service RUN_ANY_IN_BACKGROUND allow >/dev/null 2>&1
-am startservice --user 0 -n com.hypercharge.service/.NotificationService >/dev/null 2>&1
-am start-foreground-service --user 0 -n com.hypercharge.service/.NotificationService >/dev/null 2>&1
-am start --user 0 -n com.hypercharge.service/.MainActivity >/dev/null 2>&1
+# pm/am/dumpsys are dead until Android finishes booting -- grant + start would silently no-op
+while [ "$(getprop sys.boot_completed)" != "1" ]; do
+  sleep 2
+done
 sleep 3
+
+NOTIF_SVC="com.hypercharge.service/.ChargeNotificationService"
+
+install_helper_apk() {
+  pm list packages 2>/dev/null | grep -q "com.hypercharge.service" && return 0
+  for APK_SRC in "$MODDIR/system/app/HyperChargingService/HyperChargeService.apk" \
+                 "/system/app/HyperChargingService/HyperChargeService.apk"; do
+    [ -f "$APK_SRC" ] || continue
+    # PackageManager cannot read /data/adb (SELinux); stage in /data/local/tmp first
+    cp -f "$APK_SRC" /data/local/tmp/fcp_install.apk 2>/dev/null || continue
+    chmod 644 /data/local/tmp/fcp_install.apk 2>/dev/null
+    pm install -r -d -g /data/local/tmp/fcp_install.apk >/dev/null 2>&1
+    rm -f /data/local/tmp/fcp_install.apk 2>/dev/null
+    return 0
+  done
+  return 1
+}
+
+grant_helper_permissions() {
+  pm grant com.hypercharge.service android.permission.POST_NOTIFICATIONS >/dev/null 2>&1
+  pm grant com.hypercharge.service android.permission.FOREGROUND_SERVICE >/dev/null 2>&1
+  pm grant com.hypercharge.service android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS >/dev/null 2>&1
+  appops set com.hypercharge.service POST_NOTIFICATIONS allow >/dev/null 2>&1
+  cmd appops set com.hypercharge.service POST_NOTIFICATIONS allow >/dev/null 2>&1
+  cmd appops set com.hypercharge.service RUN_IN_BACKGROUND allow >/dev/null 2>&1
+  cmd appops set com.hypercharge.service RUN_ANY_IN_BACKGROUND allow >/dev/null 2>&1
+  dumpsys deviceidle whitelist +com.hypercharge.service >/dev/null 2>&1
+  dumpsys deviceidle tempwhitelist com.hypercharge.service >/dev/null 2>&1
+}
+
+install_helper_apk
+grant_helper_permissions
+am start-foreground-service --user 0 -n "$NOTIF_SVC" >/dev/null 2>&1
+sleep 2
 
 LOG_FILE="/sdcard/fast_charge_plus.log"
 MAX_LOG_SIZE=200000
@@ -143,14 +167,9 @@ ensure_app_running() {
   _RUNNING=$(ps -A 2>/dev/null | grep -c "com.hypercharge.service")
   [ "$_RUNNING" -eq 0 ] && _RUNNING=$(ps 2>/dev/null | grep -c "com.hypercharge.service")
   if [ "$_RUNNING" -eq 0 ]; then
-    pm grant com.hypercharge.service android.permission.POST_NOTIFICATIONS >/dev/null 2>&1
-    appops set com.hypercharge.service POST_NOTIFICATIONS allow >/dev/null 2>&1
-    cmd appops set com.hypercharge.service RUN_IN_BACKGROUND allow >/dev/null 2>&1
-    cmd appops set com.hypercharge.service RUN_ANY_IN_BACKGROUND allow >/dev/null 2>&1
-    dumpsys deviceidle whitelist +com.hypercharge.service >/dev/null 2>&1
-    dumpsys deviceidle tempwhitelist com.hypercharge.service >/dev/null 2>&1
-    am startservice --user 0 -n com.hypercharge.service/.NotificationService >/dev/null 2>&1
-    am start-foreground-service --user 0 -n com.hypercharge.service/.NotificationService >/dev/null 2>&1
+    install_helper_apk
+    grant_helper_permissions
+    am start-foreground-service --user 0 -n "$NOTIF_SVC" >/dev/null 2>&1
     APP_RUNNING=0
   else
     APP_RUNNING=1
@@ -166,10 +185,18 @@ send_notification() {
   REMAINING="${6:-0}"
   TIME_LEFT_PARAM="${7:-0}"
   APP_CHECK_COUNTER=$((APP_CHECK_COUNTER + 1))
-  if [ "$APP_CHECK_COUNTER" -ge 30 ] || [ "$APP_RUNNING" -eq 0 ]; then
+  if [ "$APP_CHECK_COUNTER" -ge 20 ] || [ "$APP_RUNNING" -eq 0 ]; then
     APP_CHECK_COUNTER=0
     ensure_app_running
   fi
+
+  # direct FGS intent -- root (uid 0) bypasses Android 14 background launch limits
+  am start-foreground-service --user 0 -n "$NOTIF_SVC" \
+    --es mode "$MODE" --ei temp "$TEMP_C" --ei battery "$BAT" \
+    --ei current "${CUR_MA:-0}" --es appname "${APP_NAME:-}" --es watt "${APP_NAME:-}" \
+    --ei remaining "${REMAINING:-0}" --ei timeleft "${TIME_LEFT_PARAM:-0}" >/dev/null 2>&1
+
+  # broadcast fallback for dynamic receivers
   am broadcast --user 0 \
     -a com.hypercharge.service.UPDATE_NOTIFICATION \
     -n com.hypercharge.service/.CommandReceiver \

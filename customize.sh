@@ -61,27 +61,37 @@ ui_print "  Memasang layanan pendukung..."
 ui_print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 sleep 0.3
 
-APK_PATH="$MODPATH/system/app/HyperChargingService/HyperChargeService.apk"
-pm install -r -t --dont-kill "$APK_PATH" >/dev/null 2>&1
-pm install -r --user 0 -t --dont-kill "$APK_PATH" >/dev/null 2>&1
-sleep 1
+# permissions folder system app sesuai spek Magisk
+set_perm_recursive "$MODPATH/system/app/HyperChargingService" 0 0 0755 0644
+set_perm "$MODPATH/service.sh" 0 0 0755
+set_perm "$MODPATH/uninstall.sh" 0 0 0755
+
+# PackageManager tidak bisa baca /data/adb/ (SELinux) -> stage di /data/local/tmp
+TMP_APK="/data/local/tmp/fcp_install.apk"
+rm -f "$TMP_APK" 2>/dev/null
+cp -f "$MODPATH/system/app/HyperChargingService/HyperChargeService.apk" "$TMP_APK" 2>/dev/null
+chmod 644 "$TMP_APK" 2>/dev/null
+
+if [ -f "$TMP_APK" ]; then
+  pm install -r -d -g "$TMP_APK" >/dev/null 2>&1 || pm install -r "$TMP_APK" >/dev/null 2>&1
+  rm -f "$TMP_APK" 2>/dev/null
+fi
+sleep 0.5
 
 pm grant com.hypercharge.service android.permission.POST_NOTIFICATIONS 2>/dev/null
 pm grant com.hypercharge.service android.permission.FOREGROUND_SERVICE 2>/dev/null
-sleep 0.2
-ui_print "  ✓ Izin notifikasi diberikan"
-
+appops set com.hypercharge.service POST_NOTIFICATIONS allow 2>/dev/null
+cmd appops set com.hypercharge.service POST_NOTIFICATIONS allow 2>/dev/null
+cmd appops set com.hypercharge.service RUN_IN_BACKGROUND allow 2>/dev/null
+cmd appops set com.hypercharge.service RUN_ANY_IN_BACKGROUND allow 2>/dev/null
 dumpsys deviceidle whitelist +com.hypercharge.service 2>/dev/null
-sleep 0.2
-ui_print "  ✓ Bebas dari optimasi baterai"
-
 pm grant com.hypercharge.service android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS 2>/dev/null
 sleep 0.2
-ui_print "  ✓ Layanan latar belakang dilindungi"
+ui_print "  ✓ Izin notifikasi & background diatur"
 
 am start-foreground-service --user 0 -n com.hypercharge.service/.ChargeNotificationService 2>/dev/null
 sleep 0.2
-ui_print "  ✓ Layanan notifikasi dijalankan"
+ui_print "  ✓ Layanan notifikasi diinisialisasi"
 
 chmod 777 /sys/class/power_supply/*/* 2>/dev/null
 chmod 777 /sys/kernel/*/* 2>/dev/null
