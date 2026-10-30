@@ -1,37 +1,39 @@
-# FAST_CHARGING_PLUS v1.0
+# ⚡ FAST_CHARGING_PLUS
 
-> Modul Magisk / KernelSU / APatch untuk optimasi fast charging 67W Poco F4 (munch / Snapdragon 8250)
+Modul Magisk / KernelSU / APatch untuk Xiaomi Poco F4 (munch / SM8250) pada ROM Evolution X / AOSP.
 
----
-
-## ⚡ Fitur Utama
-1. **67W Dual Charge Pump Unthrottled**:
-   Mengoptimalkan IC dual pump SM8250 agar pengisian tetap berada di kecepatan puncak lebih lama.
-2. **Screen-on Current Boost**:
-   Mencegah pembatasan arus charging ke 1.5A saat layar aktif.
-3. **Live Watt Notifikasi**:
-   Notifikasi real-time menampilkan suhu baterai (°C), persentase baterai (%), arus masuk (mA), dan daya charging aktual (Watt).
-4. **Aman & Dingin**:
-   Governor kernel dinamis menurunkan arus secara bertahap saat suhu melewati 46°C untuk proteksi baterai.
+Dibuat oleh: **yafi**
 
 ---
 
-## 📱 Kompatibilitas
-- **Device**: Xiaomi Poco F4 (Codename: munch)
-- **Chipset**: Qualcomm Snapdragon 870 5G (SM8250-AC)
-- **ROM**: AOSP-based ROMs
-- **Root**: Magisk v24+, KernelSU, APatch
+## 🔋 Fitur Utama
+
+- **Tanpa Game Bypass Mode**: Pengisian daya tetap berjalan penuh saat bermain game tanpa beralih ke bypass.
+- **Tanpa Inactive Charging**: Masalah status charging "Inactive" dan drop arus saat bermain game dihapus total.
+- **Optimasi Fast Charging 67W**:
+  - Screen-on current throttle bypass: Arus tetap deras meskipun layar menyala.
+  - Reset `system_temp_level=0` setiap 0.6 detik: Menghentikan pembatasan termal agresif dari thermal-engine kernel.
+  - Pengaktifan Xiaomi Dual Charge Pump (`bq2597x`, `sc8551`, `ln8000`, `smb1396`).
+  - Kurva tangga termal 8 tingkat yang disesuaikan khusus untuk Snapdragon 870 Poco F4.
+- **Live Watt Indicator pada Notifikasi**:
+  - Menampilkan daya pengisian real-time dalam satuan Watt (W).
+  - Menampilkan arus pengisian real-time (mA).
+  - Menampilkan suhu (°C), persentase baterai, dan estimasi waktu sampai penuh.
+- **Proteksi Baterai**:
+  - Tapering arus bertingkat pada kapasitas 85%, 90%, 95%, dan 99% agar sel baterai tetap awet.
+  - Cutoff otomatis 2 menit setelah baterai mencapai 100%.
+  - Cutoff darurat pada suhu kritis (50°C).
 
 ---
 
-## 🛠 Instalasi
-1. Download file `FAST_CHARGING_PLUS_v1.0_PocoF4.zip` dari halaman Releases.
-2. Buka aplikasi **Magisk** / **KernelSU** / **APatch**.
-3. Pilih **Modul** -> **Instal dari penyimpanan**.
-4. Pilih zip yang sudah didownload.
-5. Selesai flash, lakukan **Reboot**.
+## 📦 Pemasangan
+
+1. Flash zip modul lewat Magisk / KernelSU / APatch.
+2. Reboot HP.
+3. Notifikasi status pengisian daya akan muncul otomatis saat charger dicolokkan.
 
 ---
 
-## 📄 Lisensi
-Modul ini dilisensikan di bawah lisensi MIT.
+## 🧹 Penghapusan
+
+Hapus modul lewat manajer root (Magisk / KernelSU / APatch) lalu reboot perangkat.

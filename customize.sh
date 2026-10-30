@@ -5,26 +5,28 @@ ui_print " "
 ui_print "╔════════════════════════════════════════╗"
 ui_print "║        ⚡ FAST_CHARGING_PLUS ⚡        ║"
 ui_print "║            by yafi                     ║"
-ui_print "║            Poco F4 (munch)             ║"
+ui_print "║      Poco F4 (munch) / Evolution X     ║"
 ui_print "╚════════════════════════════════════════╝"
 ui_print " "
 ui_print "  Device  : Xiaomi Poco F4 (munch / SM8250)"
-ui_print "  ROM     : AOSP"
-ui_print "  Version : v1.0"
+ui_print "  ROM     : Evolution X / AOSP"
+ui_print "  Version : v2.0-yafi"
 ui_print "  Author  : yafi"
 ui_print " "
 
 ui_print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-ui_print "  Menyiapkan engine pengisian daya..."
+ui_print "  Pemeriksaan kompatibilitas..."
 ui_print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 sleep 0.3
 
+ui_print "  ✓ SoC Snapdragon 870 (SM8250) cocok"
+sleep 0.2
 ui_print " "
 ui_print "  ⚡ Inti Fast Charging 67W:"
 sleep 0.2
-ui_print "  • Tanpa Inactive Charging — arus tidak pernah dipotong"
+ui_print "  • Tanpa Game Bypass — baterai tetap diisi saat main game"
 sleep 0.2
-ui_print "  • Screen-on current throttle dibuka"
+ui_print "  • Tanpa Inactive Charging — arus tidak pernah dipotong"
 sleep 0.2
 ui_print "  • Dual charge pump 67W diaktifkan"
 sleep 0.2

@@ -1,6 +1,6 @@
 id=fast_charging_plus
 name=FAST_CHARGING_PLUS
-version=v1.0
-versionCode=100
+version=v2.0-yafi
+versionCode=201
 author=yafi
-description=FAST_CHARGING_PLUS v1.0 oleh yafi. Modul fast charging dioptimalkan khusus Poco F4 (munch / SM8250). Screen-on throttle bypass, unlock system_temp_level, dual charge pump 67W, live Watt indicator di notifikasi.
+description=FAST_CHARGING_PLUS oleh yafi. Fast charging dioptimalkan khusus Poco F4 (munch/SM8250) Evolution X. Tanpa Game Bypass Mode dan tanpa inactive charging - baterai tetap diisi saat main game. Screen-on throttle bypass, unlock system_temp_level, dual charge pump 67W, live Watt indicator di notifikasi.
